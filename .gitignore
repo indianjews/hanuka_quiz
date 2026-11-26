@@ -1,0 +1,5 @@
+tiktok-video/node_modules/
+tiktok-video/dist/
+node_modules/
+.env
+*.log

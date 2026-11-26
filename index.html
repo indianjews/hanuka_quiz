@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hanukkah Quiz - Indian Jewry</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Cinzel:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue: #07152b;
+            --light-blue: #122d53;
+            --gold: #dfb15b;
+            --gold-light: #f7d688;
+        }
+        
+        body {
+            background-color: var(--deep-blue);
+            background-image: radial-gradient(circle at center, var(--light-blue) 0%, var(--deep-blue) 70%);
+            color: white;
+            font-family: 'Assistant', 'Inter', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .hebrew-text { font-family: 'Assistant', sans-serif; }
+        .english-text { font-family: 'Inter', sans-serif; }
+        .title-english { font-family: 'Cinzel', serif; }
+
+        .gold-text { color: var(--gold-light); }
+        .gold-bg { background-color: var(--gold); color: var(--deep-blue); }
+        .gold-border { border-color: var(--gold); }
+        
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            color: var(--deep-blue);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(223, 177, 91, 0.3);
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(223, 177, 91, 0.5);
+        }
+        .btn-gold:active { transform: translateY(1px); }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(223, 177, 91, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .option-card:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--gold); }
+        .option-card.selected { background: rgba(223, 177, 91, 0.2); border-color: var(--gold-light); }
+        
+        .correct-bg { background: rgba(34, 197, 94, 0.2) !important; border-color: #22c55e !important; }
+        .wrong-bg { background: rgba(239, 68, 68, 0.2) !important; border-color: #ef4444 !important; }
+
+        /* Mandala/Paisley subtle pattern overlay */
+        .pattern-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dfb15b' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="pattern-overlay"></div>
+
+    <!-- Header & Language Toggle -->
+    <header class="w-full max-w-2xl flex justify-between items-center mb-8 relative z-10">
+        <div class="flex items-center gap-2">
+            <!-- Menorah Icon (SVG) -->
+            <svg class="w-8 h-8 gold-text" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12,2L12,2c0.6,0,1,0.4,1,1v5h2V5c0-0.6,0.4-1,1-1s1,0.4,1,1v3h2V4c0-0.6,0.4-1,1-1s1,0.4,1,1v4h2V3c0-0.6,0.4-1,1-1s1,0.4,1,1v10 c0,2.8-2.2,5-5,5v2h3c0.6,0,1,0.4,1,1s-0.4,1-1,1H5c-0.6,0-1-0.4-1-1s0.4-1,1-1h3v-2c-2.8,0-5-2.2-5-5V3C3,2.4,3.4,2,4,2S5,2.4,5,3v4 h2V4C7,3.4,7.4,3,8,3S9,3.4,9,4v3h2V5c0-0.6,0.4-1,1-1S13,4.4,13,5V2C13,1.4,12.6,1,12,1S11,1.4,11,2z"/>
+                <circle cx="12" cy="1" r="1.5" fill="#f7d688"/>
+                <circle cx="4" cy="1" r="1" fill="#f7d688"/>
+                <circle cx="8" cy="2" r="1" fill="#f7d688"/>
+                <circle cx="16" cy="2" r="1" fill="#f7d688"/>
+                <circle cx="20" cy="1" r="1" fill="#f7d688"/>
+            </svg>
+            <span class="font-bold text-xl gold-text tracking-wide" id="header-title">IJHC</span>
+        </div>
+
+        <!-- NEW: Completion Counter UI -->
+        <div id="completions-counter" class="hidden items-center gap-2 bg-black/20 px-4 py-1.5 rounded-full border border-white/10 text-sm md:text-base ml-auto mr-4">
+            <span class="text-yellow-400">🔥</span>
+            <span id="completions-text" class="font-semibold text-white"></span>
+        </div>
+
+        <button onclick="toggleLanguage()" class="border-2 gold-border gold-text px-3 py-1 rounded-full text-sm font-semibold hover:bg-yellow-600/20 transition">
+            <span id="lang-btn-text">English</span>
+        </button>
+    </header>
+
+    <!-- Main App Container -->
+    <main id="app-container" class="w-full max-w-2xl bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-6 md:p-10 shadow-2xl relative z-10 fade-in">
+        <!-- Content injected by JS -->
+    </main>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="bg-gradient-to-br from-[#122d53] to-[#07152b] border border-yellow-600/30 rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl transform transition-all scale-95 opacity-0" id="share-modal-content">
+            <h3 id="share-title" class="text-2xl font-bold gold-text mb-6 text-center title-english">Share Result</h3>
+            <div class="flex flex-col gap-3">
+                <button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-[#1ebe57] transition shadow-lg">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.824-3.113 6.938-6.938 6.938z"/></svg>
+                    WhatsApp
+                </button>
+                <button onclick="shareFacebook()" class="bg-[#1877F2] text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-[#166fe5] transition shadow-lg">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                    Facebook
+                </button>
+                <button onclick="copyShareText()" class="bg-white/10 text-white py-3 px-4 border border-white/20 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-white/20 transition shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    <span id="copy-btn-text">Copy Text</span>
+                </button>
+            </div>
+            <button onclick="closeShareModal()" class="mt-6 text-gray-400 hover:text-white text-base w-full text-center transition font-semibold p-2">Close</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, increment, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Quiz Data based on provided facts
+        const quizData = [
+            {
+                type: "mcq",
+                he: {
+                    question: "מדוע קהילת 'בני ישראל' לא חגגה את חנוכה במקור?",
+                    options: [
+                        "מפני שלא היה שמן זית בהודו",
+                        "הם הגיעו להודו לפני מרד החשמונאים ונס פך השמן",
+                        "המנהג אבד במהלך נדידתם מאירופה",
+                        "הם צמו בחג במקום לחגוג"
+                    ],
+                    explanation: "קהילת 'בני ישראל' הגיעה לחוף קונקאן לפני למעלה מ-2,100 שנה, טרם התרחשותו של מרד החשמונאים. הם אימצו את החג מאות שנים מאוחר יותר!"
+                },
+                en: {
+                    question: "Why didn't the 'Bene Israel' community originally celebrate Hanukkah?",
+                    options: [
+                        "Because there was no olive oil in India",
+                        "They arrived in India before the Maccabean revolt and the miracle of the oil",
+                        "The tradition was lost during their migration from Europe",
+                        "They fasted during the holiday instead of celebrating"
+                    ],
+                    explanation: "The 'Bene Israel' community arrived in the Konkan coast over 2,100 years ago, before the Maccabean revolt occurred. They adopted the holiday centuries later!"
+                },
+                correctIndex: 1
+            },
+            {
+                type: "tf",
+                he: {
+                    question: "נכון או לא נכון: משחק בסביבון וחלוקת דמי חנוכה הם מנהגים עתיקים ביהדות הודו.",
+                    options: ["נכון", "לא נכון"],
+                    explanation: "לא נכון. מסורות אלו הגיעו מאירופה והיו זרות לחלוטין למסורת ההודית המקורית."
+                },
+                en: {
+                    question: "True or False: Playing with dreidels and giving Hanukkah gelt are ancient customs in Indian Jewry.",
+                    options: ["True", "False"],
+                    explanation: "False. These traditions originated in Europe and were completely foreign to the original Indian traditions."
+                },
+                correctIndex: 1
+            },
+            {
+                type: "mcq",
+                he: {
+                    question: "איזה מאכל מטוגן מכינים יהודי כלכותה לחנוכה במקום סופגניות?",
+                    options: [
+                        "סמוסה (Samosa)",
+                        "פילוריס (Filowrees) - כדורי חומוס מתובלים",
+                        "צ'יפס ודגים",
+                        "פלאפל"
+                    ],
+                    explanation: "בקרב יהודי כלכותה, החטיף המסורתי הוא 'פילוריס' - כדורים העשויים ממחית חומוס מתובלת בכוסברה וכמון שחור המטוגנים בשמן עמוק."
+                },
+                en: {
+                    question: "What fried food do the Jews of Kolkata prepare for Hanukkah instead of Sufganiyot (donuts)?",
+                    options: [
+                        "Samosa",
+                        "Filowrees - Spiced chickpea balls",
+                        "Fish and Chips",
+                        "Falafel"
+                    ],
+                    explanation: "Among the Jews of Kolkata, the traditional snack is 'Filowrees' - deep-fried balls made from chickpea mash spiced with coriander and black cumin."
+                },
+                correctIndex: 1
+            },
+            {
+                type: "mcq",
+                he: {
+                    question: "מהו 'קנדה בהאג'י' (Kanda Bhaji) שנהוג לאכול בחנוכה?",
+                    options: [
+                        "אורז מתוק עם צימוקים",
+                        "לביבות תפוחי אדמה קלאסיות",
+                        "לביבות בצל מטוגנות בסגנון הודי",
+                        "סוג של תה חם"
+                    ],
+                    explanation: "יהודי הודו מציינים את נס פך השמן באמצעות מאכלים מהמטבח המקומי, כמו 'קנדה בהאג'י' שהן לביבות בצל מטוגנות וטעימות."
+                },
+                en: {
+                    question: "What is 'Kanda Bhaji', traditionally eaten during Hanukkah?",
+                    options: [
+                        "Sweet rice with raisins",
+                        "Classic potato latkes",
+                        "Indian-style fried onion fritters",
+                        "A type of hot tea"
+                    ],
+                    explanation: "Indian Jews celebrate the miracle of the oil using local cuisine, such as 'Kanda Bhaji' which are delicious fried onion fritters."
+                },
+                correctIndex: 2
+            },
+            {
+                type: "mcq",
+                he: {
+                    question: "מה נהגו לתלות על הקיר בסמוך לחנוכיות במסורת יהודי כלכותה?",
+                    options: [
+                        "תמונות של המכבים",
+                        "דפים מעוטרים עם ברכות ומזמור ס\"ז מתהילים",
+                        "שרשראות נייר זוהרות",
+                        "מראות כדי להכפיל את האור"
+                    ],
+                    explanation: "במסורת יהודי כלכותה היה נהוג לתלות על הקיר בסמוך לחנוכיות דפים מעוטרים ויפהפיים שכללו את ברכות ההדלקה ואת מזמור ס\"ז מתהילים ('למנצח בנגינות מזמור שיר')."
+                },
+                en: {
+                    question: "What was traditionally hung on the wall next to the Menorahs in the Kolkata Jewish tradition?",
+                    options: [
+                        "Pictures of the Maccabees",
+                        "Decorated pages with blessings and Psalm 67",
+                        "Glowing paper chains",
+                        "Mirrors to multiply the light"
+                    ],
+                    explanation: "In the Kolkata Jewish tradition, it was customary to hang beautifully decorated pages next to the Menorahs, featuring the lighting blessings and Psalm 67."
+                },
+                correctIndex: 1
+            },
+            {
+                type: "mcq",
+                he: {
+                    question: "בהיעדר שמן זית זמין, באיזה שמן מקומי השתמשו לעיתים קרובות קהילות יהודיות בהודו להדלקת החנוכייה?",
+                    options: [
+                        "שמן תירס",
+                        "שמן קוקוס",
+                        "שמן חרדל",
+                        "שמן דקלים"
+                    ],
+                    explanation: "בחופי הודו, הקוקוס הוא גידול מרכזי. יהודי הודו השתמשו בשמן קוקוס טהור כתחליף מסורתי וזמין לשמן הזית עבור הדלקת נרות חנוכה ושבת."
+                },
+                en: {
+                    question: "In the absence of available olive oil, which local oil did Indian Jewish communities often use to light the Menorah?",
+                    options: [
+                        "Corn oil",
+                        "Coconut oil",
+                        "Mustard oil",
+                        "Palm oil"
+                    ],
+                    explanation: "On the coasts of India, coconut is a major crop. Indian Jews used pure coconut oil as a traditional and available substitute for olive oil for lighting Hanukkah and Shabbat candles."
+                },
+                correctIndex: 1
+            },
+            {
+                type: "tf",
+                he: {
+                    question: "נכון או לא נכון: יהודים רבים במומבאי וכלכותה נהגו להדליק את החנוכייה בתוך עששית זכוכית כדי להגן עליה מהשלג והקור של הודו.",
+                    options: ["נכון", "לא נכון"],
+                    explanation: "לא נכון! הם אכן השתמשו בעששיות, אך הסיבה לא הייתה שלג - אלא כדי להגן על הלהבות ממאווררי התקרה החזקים ומהרוחות באקלים הטרופי."
+                },
+                en: {
+                    question: "True or False: Many Jews in Mumbai and Kolkata lit the Menorah inside a glass lantern to protect it from the snow and cold of India.",
+                    options: ["True", "False"],
+                    explanation: "False! They did use lanterns, but not because of snow - it was to protect the flames from strong ceiling fans and winds in the tropical climate."
+                },
+                correctIndex: 1
+            },
+            {
+                type: "mcq",
+                he: {
+                    question: "מי על פי המסורת גילה מחדש את קהילת 'בני ישראל' בהודו ולימד אותם מחדש את הלכות חנוכה ושאר החגים?",
+                    options: [
+                        "סוחרים אירופאים",
+                        "דוד רחבי מקהילת יהודי קוצ'ין",
+                        "חיילים בריטים ממוצא יהודי",
+                        "מרקו פולו"
+                    ],
+                    explanation: "על פי המסורת, דוד רחבי זיהה שהם שומרים על מנהגים בסיסיים כמו שבת, ולימד אותם את ההלכות והחגים שנוספו לאחר יציאתם לגלות, ביניהם חנוכה."
+                },
+                en: {
+                    question: "According to tradition, who rediscovered the 'Bene Israel' community in India and retaught them the laws of Hanukkah and other holidays?",
+                    options: [
+                        "European merchants",
+                        "David Rahabi from the Cochin Jewish community",
+                        "British soldiers of Jewish descent",
+                        "Marco Polo"
+                    ],
+                    explanation: "According to tradition, David Rahabi recognized they kept basic customs like Shabbat, and taught them the laws and holidays added after their exile, including Hanukkah."
+                },
+                correctIndex: 1
+            }
+        ];
+
+        // UI Strings Dictionary
+        const uiText = {
+            he: {
+                welcome: "חג חנוכה שמח!",
+                subtitle: "גלו את המסורות והמנהגים המיוחדים של יהדות הודו בחג האורים.",
+                startBtn: "התחל בחידון",
+                questionPrefix: "שאלה",
+                of: "מתוך",
+                checkBtn: "בדוק תשובה",
+                nextBtn: "לשאלה הבאה",
+                finishBtn: "סיים חידון",
+                correct: "נכון מאוד! ✨",
+                incorrect: "לא נורא... 🕎",
+                resultsTitle: "כל הכבוד!",
+                scoreIs: "הציון שלך הוא:",
+                perfectScore: "מומחים למסורת יהדות הודו! שתפו את המשפחה.",
+                goodScore: "יפה מאוד! למדתם משהו חדש היום.",
+                lowScore: "העיקר ההשתתפות! חג אורים שמח.",
+                restartBtn: "נסה שוב",
+                langToggle: "English",
+                shareBtn: "שתף תוצאה"
+            },
+            en: {
+                welcome: "Chag Hanukkah Sameach!",
+                subtitle: "Discover the unique traditions and customs of Indian Jewry during the Festival of Lights.",
+                startBtn: "Start Quiz",
+                questionPrefix: "Question",
+                of: "of",
+                checkBtn: "Check Answer",
+                nextBtn: "Next Question",
+                finishBtn: "Finish Quiz",
+                correct: "Correct! ✨",
+                incorrect: "Not quite... 🕎",
+                resultsTitle: "Great Job!",
+                scoreIs: "Your score is:",
+                perfectScore: "You're experts on Indian Jewish tradition! Share with your family.",
+                goodScore: "Well done! You learned something new today.",
+                lowScore: "Thanks for playing! Happy Festival of Lights.",
+                restartBtn: "Play Again",
+                langToggle: "עברית",
+                shareBtn: "Share Result"
+            }
+        };
+
+        // State variables
+        let currentLang = 'he';
+        let currentState = 'start'; // start, quiz, result
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let isAnswerChecked = false;
+
+        // Elements
+        const appContainer = document.getElementById('app-container');
+        const langBtnText = document.getElementById('lang-btn-text');
+
+        // Functions
+        function toggleLanguage() {
+            currentLang = currentLang === 'he' ? 'en' : 'he';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'he' ? 'rtl' : 'ltr';
+            document.body.className = `p-4 md:p-8 ${currentLang === 'he' ? 'hebrew-text' : 'english-text'}`;
+            langBtnText.innerText = uiText[currentLang].langToggle;
+            
+            // Update counter text language if visible
+            const counterText = document.getElementById('completions-text');
+            if (counterText && counterText.dataset.count) {
+                const textSuffix = currentLang === 'he' ? 'סיימו' : 'completed';
+                counterText.innerText = `${counterText.dataset.count} ${textSuffix}`;
+            }
+
+            renderCurrentState();
+        }
+
+        function renderCurrentState() {
+            if (currentState === 'start') renderStart();
+            else if (currentState === 'quiz') renderQuestion();
+            else if (currentState === 'result') renderResult();
+        }
+
+        function renderStart() {
+            const t = uiText[currentLang];
+            const titleClass = currentLang === 'en' ? 'title-english tracking-wider' : 'font-bold';
+            
+            appContainer.innerHTML = `
+                <div class="text-center fade-in">
+                    <h1 class="text-4xl md:text-5xl mb-4 gold-text ${titleClass}">${t.welcome}</h1>
+                    <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-md mx-auto leading-relaxed">${t.subtitle}</p>
+                    <button onclick="startQuiz()" class="btn-gold text-lg font-bold py-3 px-8 rounded-full shadow-lg w-full md:w-auto">
+                        ${t.startBtn}
+                    </button>
+                    <div class="mt-8 flex justify-center gap-4 opacity-70">
+                        <span class="text-4xl">🕎</span>
+                        <span class="text-4xl">🍩</span>
+                        <span class="text-4xl">✨</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startQuiz() {
+            currentState = 'quiz';
+            currentQuestionIndex = 0;
+            score = 0;
+            renderQuestion();
+        }
+
+        function getMenorahProgressHtml(currentIndex) {
+            let candlesHtml = '';
+            for (let i = 0; i < 9; i++) {
+                let isShamash = i === 4; // Center candle
+                let litCount = currentIndex + 1; // Number of question
+                
+                // If Hebrew (RTL), light from right to left [8,7,6,5, 3,2,1,0]. Else LTR.
+                let actualLitIndices = currentLang === 'he' ? 
+                    [8, 7, 6, 5, 3, 2, 1, 0].slice(0, litCount) : 
+                    [0, 1, 2, 3, 5, 6, 7, 8].slice(0, litCount);
+                
+                let isLit = isShamash || actualLitIndices.includes(i);
+                
+                let hClass = isShamash ? 'h-10 md:h-12' : 'h-6 md:h-8';
+                let flameOpacity = isLit ? 'opacity-100 scale-100' : 'opacity-0 scale-50';
+                
+                candlesHtml += `
+                    <div class="flex flex-col items-center justify-end z-10 relative w-5 md:w-6">
+                        <div class="text-yellow-400 text-lg md:text-xl transform transition-all duration-500 ease-out mb-0.5 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] ${flameOpacity}" style="line-height: 1;">🔥</div>
+                        <div class="w-2.5 md:w-3 ${hClass} bg-gradient-to-b from-[#f7d688] to-[#9a752e] rounded-t-sm shadow-md border border-yellow-800/30"></div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="w-full flex justify-center mb-8" dir="ltr">
+                    <div class="relative flex justify-center items-end gap-1.5 md:gap-3 px-4 pb-2">
+                        ${candlesHtml}
+                        <!-- Menorah Horizontal Branch -->
+                        <div class="absolute bottom-0 w-full h-2 md:h-2.5 bg-gradient-to-r from-[#9a752e] via-[#f7d688] to-[#9a752e] rounded-full shadow-lg"></div>
+                        <!-- Menorah Base -->
+                        <div class="absolute -bottom-3 w-10 h-3 bg-gradient-to-b from-[#dfb15b] to-[#9a752e] rounded-b-md"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderQuestion() {
+            isAnswerChecked = false;
+            selectedOption = null;
+            const t = uiText[currentLang];
+            const qData = quizData[currentQuestionIndex];
+            const q = qData[currentLang];
+            
+            let optionsHtml = q.options.map((opt, index) => `
+                <div onclick="selectOption(${index})" id="opt-${index}" class="option-card rounded-xl p-4 mb-3 text-lg flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full border-2 border-current flex-shrink-0 flex items-center justify-center">
+                        <div class="w-3 h-3 rounded-full bg-current opacity-0 transition-opacity" id="opt-dot-${index}"></div>
+                    </div>
+                    <span>${opt}</span>
+                </div>
+            `).join('');
+
+            appContainer.innerHTML = `
+                <div class="fade-in">
+                    <div class="flex justify-between items-center mb-6 text-sm text-gray-400 font-semibold uppercase tracking-wider">
+                        <span>${t.questionPrefix} ${currentQuestionIndex + 1} ${t.of} ${quizData.length}</span>
+                        <span class="gold-text">Score: ${score}</span>
+                    </div>
+                    
+                    ${getMenorahProgressHtml(currentQuestionIndex)}
+
+                    <h2 class="text-2xl md:text-3xl font-semibold mb-6 leading-tight">${q.question}</h2>
+                    
+                    <div id="options-container" class="mb-6">
+                        ${optionsHtml}
+                    </div>
+
+                    <div id="feedback-container" class="hidden rounded-xl p-4 mb-6 border-l-4">
+                        <h3 id="feedback-title" class="font-bold text-lg mb-2"></h3>
+                        <p id="feedback-text" class="text-gray-200 opacity-90 leading-relaxed"></p>
+                    </div>
+
+                    <button id="action-btn" onclick="checkAnswer()" class="btn-gold text-lg font-bold py-3 px-8 rounded-full shadow-lg w-full opacity-50 cursor-not-allowed transition-all" disabled>
+                        ${t.checkBtn}
+                    </button>
+                </div>
+            `;
+        }
+
+        function selectOption(index) {
+            if (isAnswerChecked) return;
+            
+            selectedOption = index;
+            
+            // Reset styles
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('div > div').classList.add('opacity-0');
+            });
+            
+            // Set active style
+            document.getElementById(`opt-${index}`).classList.add('selected');
+            document.getElementById(`opt-dot-${index}`).classList.remove('opacity-0');
+            
+            // Enable button
+            const actionBtn = document.getElementById('action-btn');
+            actionBtn.disabled = false;
+            actionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function checkAnswer() {
+            if (selectedOption === null || isAnswerChecked) return;
+            
+            isAnswerChecked = true;
+            const t = uiText[currentLang];
+            const qData = quizData[currentQuestionIndex];
+            const q = qData[currentLang];
+            const isCorrect = selectedOption === qData.correctIndex;
+            
+            if (isCorrect) score++;
+
+            // Highlight answers
+            document.getElementById(`opt-${qData.correctIndex}`).classList.add('correct-bg');
+            if (!isCorrect) {
+                document.getElementById(`opt-${selectedOption}`).classList.add('wrong-bg');
+            }
+
+            // Show feedback
+            const feedbackContainer = document.getElementById('feedback-container');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+            
+            feedbackContainer.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackContainer.classList.add('border-green-400', 'bg-green-400/10');
+                feedbackTitle.innerText = t.correct;
+                feedbackTitle.classList.add('text-green-400');
+            } else {
+                feedbackContainer.classList.add('border-red-400', 'bg-red-400/10');
+                feedbackTitle.innerText = t.incorrect;
+                feedbackTitle.classList.add('text-red-400');
+            }
+            feedbackText.innerText = q.explanation;
+
+            // Change button
+            const actionBtn = document.getElementById('action-btn');
+            const isLastQuestion = currentQuestionIndex === quizData.length - 1;
+            actionBtn.innerText = isLastQuestion ? t.finishBtn : t.nextBtn;
+            actionBtn.onclick = async () => {
+                if (isLastQuestion) {
+                    if(window.incrementCompletions) window.incrementCompletions();
+                    currentState = 'result';
+                    renderResult();
+                } else {
+                    currentQuestionIndex++;
+                    renderQuestion();
+                }
+            };
+        }
+
+        function renderResult() {
+            const t = uiText[currentLang];
+            const titleClass = currentLang === 'en' ? 'title-english tracking-wider' : 'font-bold';
+            
+            let message = '';
+            if (score === quizData.length) message = t.perfectScore;
+            else if (score >= quizData.length / 2) message = t.goodScore;
+            else message = t.lowScore;
+
+            appContainer.innerHTML = `
+                <div class="text-center fade-in">
+                    <div class="text-6xl mb-4">🕎✨</div>
+                    <h1 class="text-4xl md:text-5xl mb-2 gold-text ${titleClass}">${t.resultsTitle}</h1>
+                    <p class="text-xl text-gray-300 mb-6">${t.scoreIs}</p>
+                    
+                    <div class="text-6xl font-bold gold-text mb-6">
+                        ${score} <span class="text-3xl text-white/50">/ ${quizData.length}</span>
+                    </div>
+                    
+                    <p class="text-lg md:text-xl text-white bg-white/10 rounded-xl p-4 mb-8 inline-block">
+                        ${message}
+                    </p>
+                    
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <button onclick="openShareModal()" class="border-2 gold-border gold-text text-lg font-bold py-3 px-8 rounded-full hover:bg-yellow-600/20 transition-all w-full md:w-auto block flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                            ${t.shareBtn}
+                        </button>
+                        <button onclick="startQuiz()" class="btn-gold text-lg font-bold py-3 px-8 rounded-full shadow-lg w-full md:w-auto block mx-auto md:mx-0">
+                            ${t.restartBtn}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- New Share Modal Logic ---
+        function openShareModal() {
+            const modal = document.getElementById('share-modal');
+            const modalContent = document.getElementById('share-modal-content');
+            
+            // Update texts based on lang
+            document.getElementById('share-title').innerText = currentLang === 'he' ? 'שתף תוצאה' : 'Share Result';
+            document.getElementById('copy-btn-text').innerText = currentLang === 'he' ? 'העתק טקסט' : 'Copy Text';
+            document.querySelector('#share-modal button:last-child').innerText = currentLang === 'he' ? 'סגור' : 'Close';
+
+            modal.classList.remove('hidden');
+            // Trigger animation
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeShareModal() {
+            const modal = document.getElementById('share-modal');
+            const modalContent = document.getElementById('share-modal-content');
+            
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        function getShareText() {
+            return currentLang === 'he' ? 
+                `קיבלתי ${score}/8 בחידון חנוכה של קהילת יהודי הודו! בואו לבדוק את הידע שלכם 🕎✨\nhttps://hanuka.indianjews.org` : 
+                `I scored ${score}/8 on the Indian Jewish Hanukkah Quiz! Test your knowledge 🕎✨\nhttps://hanuka.indianjews.org`;
+        }
+
+        function shareWhatsApp() {
+            window.open(`https://wa.me/?text=${encodeURIComponent(getShareText())}`, '_blank');
+            closeShareModal();
+        }
+
+        function shareFacebook() {
+            const url = encodeURIComponent('https://hanuka.indianjews.org');
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+            closeShareModal();
+        }
+
+        function copyShareText() {
+            const text = getShareText();
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                const btnText = document.getElementById('copy-btn-text');
+                btnText.innerText = currentLang === 'he' ? 'הועתק!' : 'Copied!';
+                setTimeout(() => {
+                    btnText.innerText = currentLang === 'he' ? 'העתק טקסט' : 'Copy Text';
+                }, 2000);
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Expose functions to window (necessary because script is type="module")
+        window.toggleLanguage = toggleLanguage;
+        window.startQuiz = startQuiz;
+        window.selectOption = selectOption;
+        window.checkAnswer = checkAnswer;
+        window.openShareModal = openShareModal;
+        window.closeShareModal = closeShareModal;
+        window.shareWhatsApp = shareWhatsApp;
+        window.shareFacebook = shareFacebook;
+        window.copyShareText = copyShareText;
+
+        // --- Firebase Integration for Completions Counter ---
+        let db;
+        let statsDocRef;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        async function initFirebase() {
+            try {
+                // To use this on your own GitHub Pages, you will need to replace this config with your own free Firebase project config.
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "dummy" };
+                
+                if(firebaseConfig.projectId === "dummy") {
+                    console.warn("No Firebase config detected. The counter will not work until connected to a real database.");
+                    renderStart();
+                    return;
+                }
+                
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                const auth = getAuth(app);
+
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Reference to the completions document
+                statsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'completions');
+                
+                // Listen to completions count in real-time
+                onSnapshot(statsDocRef, (docSnap) => {
+                    const counterContainer = document.getElementById('completions-counter');
+                    const counterText = document.getElementById('completions-text');
+                    
+                    if (docSnap.exists()) {
+                        const count = docSnap.data().count || 0;
+                        counterContainer.classList.remove('hidden');
+                        counterContainer.classList.add('flex');
+                        counterText.dataset.count = count;
+                        const textSuffix = currentLang === 'he' ? 'סיימו' : 'completed';
+                        counterText.innerText = `${count} ${textSuffix}`;
+                    }
+                }, (error) => {
+                    console.error("Error listening to stats:", error);
+                });
+
+            } catch (error) {
+                console.error("Firebase init failed:", error);
+            }
+            renderStart();
+        }
+
+        window.incrementCompletions = async function() {
+            if (!statsDocRef) return;
+            try {
+                const docSnap = await getDoc(statsDocRef);
+                if (!docSnap.exists()) {
+                    await setDoc(statsDocRef, { count: 1 });
+                } else {
+                    await updateDoc(statsDocRef, { count: increment(1) });
+                }
+            } catch (error) {
+                console.error("Error updating stats:", error);
+            }
+        };
+
+        // Initialize App
+        initFirebase();
+    </script>
+</body>
+</html>
