@@ -21,12 +21,12 @@
             background-image: radial-gradient(circle at center, var(--light-blue) 0%, var(--deep-blue) 70%);
             color: white;
             font-family: 'Assistant', 'Inter', sans-serif;
-            min-height: 100vh;
+            height: 100dvh;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         .hebrew-text { font-family: 'Assistant', sans-serif; }
@@ -75,11 +75,11 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="px-3 pt-3 pb-2 md:px-6 md:pt-4">
     <div class="pattern-overlay"></div>
 
     <!-- Header & Language Toggle -->
-    <header class="w-full max-w-2xl flex justify-between items-center mb-8 relative z-10">
+    <header class="w-full max-w-2xl flex justify-between items-center mb-2 md:mb-3 relative z-10 flex-shrink-0">
         <div class="flex items-center gap-2">
             <!-- Menorah Icon (SVG) -->
             <svg class="w-8 h-8 gold-text" fill="currentColor" viewBox="0 0 24 24">
@@ -105,7 +105,7 @@
     </header>
 
     <!-- Main App Container -->
-    <main id="app-container" class="w-full max-w-2xl bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-6 md:p-10 shadow-2xl relative z-10 fade-in">
+    <main id="app-container" class="w-full max-w-2xl bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-4 md:p-6 shadow-2xl relative z-10 fade-in flex-1 min-h-0 flex flex-col overflow-hidden">
         <!-- Content injected by JS -->
     </main>
 
@@ -373,7 +373,7 @@
             currentLang = currentLang === 'he' ? 'en' : 'he';
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'he' ? 'rtl' : 'ltr';
-            document.body.className = `p-4 md:p-8 ${currentLang === 'he' ? 'hebrew-text' : 'english-text'}`;
+            document.body.className = `px-3 pt-3 pb-2 md:px-6 md:pt-4 ${currentLang === 'he' ? 'hebrew-text' : 'english-text'}`;
             langBtnText.innerText = uiText[currentLang].langToggle;
             
             // Update counter text language if visible
@@ -397,16 +397,16 @@
             const titleClass = currentLang === 'en' ? 'title-english tracking-wider' : 'font-bold';
             
             appContainer.innerHTML = `
-                <div class="text-center fade-in">
-                    <h1 class="text-4xl md:text-5xl mb-4 gold-text ${titleClass}">${t.welcome}</h1>
-                    <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-md mx-auto leading-relaxed">${t.subtitle}</p>
+                <div class="text-center fade-in flex flex-col justify-center h-full">
+                    <h1 class="text-3xl md:text-5xl mb-3 gold-text ${titleClass}">${t.welcome}</h1>
+                    <p class="text-base md:text-xl text-gray-300 mb-6 max-w-md mx-auto leading-relaxed">${t.subtitle}</p>
                     <button onclick="startQuiz()" class="btn-gold text-lg font-bold py-3 px-8 rounded-full shadow-lg w-full md:w-auto">
                         ${t.startBtn}
                     </button>
-                    <div class="mt-8 flex justify-center gap-4 opacity-70">
-                        <span class="text-4xl">🕎</span>
-                        <span class="text-4xl">🍩</span>
-                        <span class="text-4xl">✨</span>
+                    <div class="mt-6 flex justify-center gap-4 opacity-70">
+                        <span class="text-3xl">🕎</span>
+                        <span class="text-3xl">🍩</span>
+                        <span class="text-3xl">✨</span>
                     </div>
                 </div>
             `;
@@ -432,20 +432,20 @@
                 
                 let isLit = isShamash || actualLitIndices.includes(i);
                 
-                let hClass = isShamash ? 'h-10 md:h-12' : 'h-6 md:h-8';
+                let hClass = isShamash ? 'h-7 md:h-9' : 'h-4 md:h-6';
                 let flameOpacity = isLit ? 'opacity-100 scale-100' : 'opacity-0 scale-50';
-                
+
                 candlesHtml += `
-                    <div class="flex flex-col items-center justify-end z-10 relative w-5 md:w-6">
-                        <div class="text-yellow-400 text-lg md:text-xl transform transition-all duration-500 ease-out mb-0.5 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] ${flameOpacity}" style="line-height: 1;">🔥</div>
-                        <div class="w-2.5 md:w-3 ${hClass} bg-gradient-to-b from-[#f7d688] to-[#9a752e] rounded-t-sm shadow-md border border-yellow-800/30"></div>
+                    <div class="flex flex-col items-center justify-end z-10 relative w-4 md:w-5">
+                        <div class="text-yellow-400 text-sm md:text-base transform transition-all duration-500 ease-out mb-0.5 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] ${flameOpacity}" style="line-height: 1;">🔥</div>
+                        <div class="w-2 md:w-2.5 ${hClass} bg-gradient-to-b from-[#f7d688] to-[#9a752e] rounded-t-sm shadow-md border border-yellow-800/30"></div>
                     </div>
                 `;
             }
             
             return `
-                <div class="w-full flex justify-center mb-8" dir="ltr">
-                    <div class="relative flex justify-center items-end gap-1.5 md:gap-3 px-4 pb-2">
+                <div class="w-full flex justify-center mb-3" dir="ltr">
+                    <div class="relative flex justify-center items-end gap-1 md:gap-2 px-3 pb-2">
                         ${candlesHtml}
                         <!-- Menorah Horizontal Branch -->
                         <div class="absolute bottom-0 w-full h-2 md:h-2.5 bg-gradient-to-r from-[#9a752e] via-[#f7d688] to-[#9a752e] rounded-full shadow-lg"></div>
@@ -464,37 +464,41 @@
             const q = qData[currentLang];
             
             let optionsHtml = q.options.map((opt, index) => `
-                <div onclick="selectOption(${index})" id="opt-${index}" class="option-card rounded-xl p-4 mb-3 text-lg flex items-center gap-3">
-                    <div class="w-6 h-6 rounded-full border-2 border-current flex-shrink-0 flex items-center justify-center">
-                        <div class="w-3 h-3 rounded-full bg-current opacity-0 transition-opacity" id="opt-dot-${index}"></div>
+                <div onclick="selectOption(${index})" id="opt-${index}" class="option-card rounded-xl p-2.5 mb-2 text-base flex items-center gap-2.5">
+                    <div class="w-5 h-5 rounded-full border-2 border-current flex-shrink-0 flex items-center justify-center">
+                        <div class="w-2.5 h-2.5 rounded-full bg-current opacity-0 transition-opacity" id="opt-dot-${index}"></div>
                     </div>
                     <span>${opt}</span>
                 </div>
             `).join('');
 
             appContainer.innerHTML = `
-                <div class="fade-in">
-                    <div class="flex justify-between items-center mb-6 text-sm text-gray-400 font-semibold uppercase tracking-wider">
-                        <span>${t.questionPrefix} ${currentQuestionIndex + 1} ${t.of} ${quizData.length}</span>
-                        <span class="gold-text">Score: ${score}</span>
-                    </div>
-                    
-                    ${getMenorahProgressHtml(currentQuestionIndex)}
+                <div class="fade-in flex flex-col h-full min-h-0">
+                    <div class="flex-1 overflow-y-auto min-h-0 pb-1">
+                        <div class="flex justify-between items-center mb-2 text-xs text-gray-400 font-semibold uppercase tracking-wider">
+                            <span>${t.questionPrefix} ${currentQuestionIndex + 1} ${t.of} ${quizData.length}</span>
+                            <span class="gold-text">Score: ${score}</span>
+                        </div>
 
-                    <h2 class="text-2xl md:text-3xl font-semibold mb-6 leading-tight">${q.question}</h2>
-                    
-                    <div id="options-container" class="mb-6">
-                        ${optionsHtml}
+                        ${getMenorahProgressHtml(currentQuestionIndex)}
+
+                        <h2 class="text-xl md:text-2xl font-semibold mb-3 leading-tight">${q.question}</h2>
+
+                        <div id="options-container" class="mb-2">
+                            ${optionsHtml}
+                        </div>
+
+                        <div id="feedback-container" class="hidden rounded-xl p-3 mb-2 border-l-4">
+                            <h3 id="feedback-title" class="font-bold text-base mb-1"></h3>
+                            <p id="feedback-text" class="text-gray-200 opacity-90 leading-snug text-sm"></p>
+                        </div>
                     </div>
 
-                    <div id="feedback-container" class="hidden rounded-xl p-4 mb-6 border-l-4">
-                        <h3 id="feedback-title" class="font-bold text-lg mb-2"></h3>
-                        <p id="feedback-text" class="text-gray-200 opacity-90 leading-relaxed"></p>
+                    <div class="flex-shrink-0 pt-2">
+                        <button id="action-btn" onclick="checkAnswer()" class="btn-gold text-base font-bold py-2.5 px-8 rounded-full shadow-lg w-full opacity-50 cursor-not-allowed transition-all" disabled>
+                            ${t.checkBtn}
+                        </button>
                     </div>
-
-                    <button id="action-btn" onclick="checkAnswer()" class="btn-gold text-lg font-bold py-3 px-8 rounded-full shadow-lg w-full opacity-50 cursor-not-allowed transition-all" disabled>
-                        ${t.checkBtn}
-                    </button>
                 </div>
             `;
         }
@@ -580,25 +584,25 @@
             else message = t.lowScore;
 
             appContainer.innerHTML = `
-                <div class="text-center fade-in">
-                    <div class="text-6xl mb-4">🕎✨</div>
-                    <h1 class="text-4xl md:text-5xl mb-2 gold-text ${titleClass}">${t.resultsTitle}</h1>
-                    <p class="text-xl text-gray-300 mb-6">${t.scoreIs}</p>
-                    
-                    <div class="text-6xl font-bold gold-text mb-6">
-                        ${score} <span class="text-3xl text-white/50">/ ${quizData.length}</span>
+                <div class="text-center fade-in flex flex-col justify-center h-full">
+                    <div class="text-5xl mb-2">🕎✨</div>
+                    <h1 class="text-3xl md:text-5xl mb-1 gold-text ${titleClass}">${t.resultsTitle}</h1>
+                    <p class="text-base text-gray-300 mb-3">${t.scoreIs}</p>
+
+                    <div class="text-5xl font-bold gold-text mb-3">
+                        ${score} <span class="text-2xl text-white/50">/ ${quizData.length}</span>
                     </div>
-                    
-                    <p class="text-lg md:text-xl text-white bg-white/10 rounded-xl p-4 mb-8 inline-block">
+
+                    <p class="text-base md:text-lg text-white bg-white/10 rounded-xl p-3 mb-5 inline-block">
                         ${message}
                     </p>
-                    
-                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
-                        <button onclick="openShareModal()" class="border-2 gold-border gold-text text-lg font-bold py-3 px-8 rounded-full hover:bg-yellow-600/20 transition-all w-full md:w-auto block flex items-center justify-center gap-2">
+
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-3">
+                        <button onclick="openShareModal()" class="border-2 gold-border gold-text text-base font-bold py-2.5 px-8 rounded-full hover:bg-yellow-600/20 transition-all w-full md:w-auto flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                             ${t.shareBtn}
                         </button>
-                        <button onclick="startQuiz()" class="btn-gold text-lg font-bold py-3 px-8 rounded-full shadow-lg w-full md:w-auto block mx-auto md:mx-0">
+                        <button onclick="startQuiz()" class="btn-gold text-base font-bold py-2.5 px-8 rounded-full shadow-lg w-full md:w-auto">
                             ${t.restartBtn}
                         </button>
                     </div>
