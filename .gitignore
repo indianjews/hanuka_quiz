@@ -3,3 +3,5 @@ tiktok-video/dist/
 node_modules/
 .env
 *.log
+credentials.json
+token.pkl
