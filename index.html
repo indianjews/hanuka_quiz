@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hanukkah Quiz - Indian Jewry</title>
     <!-- Tailwind CSS -->
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NT4M7657');</script>
+    <!-- End Google Tag Manager -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Cinzel:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -76,6 +83,10 @@
     </style>
 </head>
 <body class="px-3 pt-3 pb-2 md:px-6 md:pt-4">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NT4M7657"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <div class="pattern-overlay"></div>
 
     <!-- Header & Language Toggle -->
@@ -412,10 +423,16 @@
             `;
         }
 
+        function trackEvent(eventName, params) {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ event: eventName, ...params });
+        }
+
         function startQuiz() {
             currentState = 'quiz';
             currentQuestionIndex = 0;
             score = 0;
+            trackEvent('quiz_started', { language: currentLang });
             renderQuestion();
         }
 
@@ -535,6 +552,12 @@
             
             if (isCorrect) score++;
 
+            trackEvent('question_answered', {
+                question_index: currentQuestionIndex + 1,
+                correct: isCorrect,
+                language: currentLang
+            });
+
             // Highlight answers
             document.getElementById(`opt-${qData.correctIndex}`).classList.add('correct-bg');
             if (!isCorrect) {
@@ -565,6 +588,7 @@
             actionBtn.onclick = async () => {
                 if (isLastQuestion) {
                     if(window.incrementCompletions) window.incrementCompletions();
+                    trackEvent('quiz_completed', { score, total: quizData.length, language: currentLang });
                     currentState = 'result';
                     renderResult();
                 } else {
